@@ -1,0 +1,161 @@
+# BioPulse Guardian Configuration
+# Configuration file for the BioPulse Guardian health monitoring system
+
+# Database Configuration
+database:
+  host: "localhost"
+  port: 5432
+  name: "biopulse_guardian"
+  username: "biopulse_user"
+  password: "secure_password"
+  pool_size: 10
+  timeout: 30
+
+# Web Application Configuration
+web:
+  host: "0.0.0.0"
+  port: 5000
+  debug: false
+  secret_key: "your-secret-key-change-in-production"
+  session_timeout: 3600
+
+# AI Model Configuration
+ai_models:
+  anomaly_detection:
+    model_path: "models/anomaly_detector.pkl"
+    threshold: 0.8
+    confidence_level: 0.95
+  health_prediction:
+    model_path: "models/health_predictor.pkl"
+    features: ["heart_rate", "blood_pressure", "temperature", "oxygen_saturation"]
+    retrain_interval: 86400  # 24 hours in seconds
+
+# Health Monitoring Rules
+health_rules:
+  enabled: true
+  rules:
+    heart_rate:
+      min: 60
+      max: 100
+      critical_min: 40
+      critical_max: 150
+    blood_pressure:
+      systolic:
+        min: 90
+        max: 140
+        critical_max: 180
+      diastolic:
+        min: 60
+        max: 90
+        critical_max: 120
+    temperature:
+      min: 97.0
+      max: 99.5
+      critical_min: 95.0
+      critical_max: 104.0
+    oxygen_saturation:
+      min: 95
+      critical_min: 90
+
+# ETL Pipeline Configuration
+etl:
+  batch_size: 1000
+  processing_interval: 300  # 5 minutes
+  data_sources:
+    - type: "sensor_api"
+      endpoint: "https://api.healthsensors.com/v1/data"
+      api_key: "your-api-key"
+    - type: "database"
+      connection: "postgres://user:pass@localhost/health_data"
+  output:
+    format: "json"
+    compression: true
+
+# Feature Extraction Configuration
+feature_extraction:
+  window_size: 60  # seconds
+  aggregation_methods: ["mean", "std", "min", "max"]
+  derived_features:
+    - "heart_rate_variability"
+    - "blood_pressure_pulse_pressure"
+    - "temperature_trend"
+
+# Reporting Configuration
+reporting:
+  formats: ["pdf", "html", "json"]
+  schedule:
+    daily: "06:00"
+    weekly: "monday 08:00"
+    monthly: "1st 10:00"
+  email:
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    username: "your-email@gmail.com"
+    password: "your-app-password"
+    recipients: ["doctor@hospital.com", "patient@email.com"]
+
+# Alert Configuration
+alerts:
+  enabled: true
+  channels:
+    email:
+      enabled: true
+      template: "alert_email.html"
+    sms:
+      enabled: false
+      provider: "twilio"
+      account_sid: "your-twilio-sid"
+      auth_token: "your-twilio-token"
+    slack:
+      enabled: false
+      webhook_url: "https://hooks.slack.com/services/your/webhook/url"
+  severity_levels:
+    - "low"
+    - "medium"
+    - "high"
+    - "critical"
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/biopulse_guardian.log"
+  max_size: "10MB"
+  backup_count: 5
+
+# Security Configuration
+security:
+  encryption:
+    algorithm: "AES-256"
+    key_rotation_days: 90
+  authentication:
+    method: "jwt"
+    token_expiry: 3600  # 1 hour
+    refresh_token_expiry: 604800  # 7 days
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 60
+
+# Data Retention Policy
+data_retention:
+  raw_data_days: 365
+  processed_data_days: 1095  # 3 years
+  logs_days: 90
+  reports_days: 2555  # 7 years
+
+# Backup Configuration
+backup:
+  enabled: true
+  schedule: "daily 02:00"
+  retention_days: 30
+  storage:
+    type: "s3"
+    bucket: "biopulse-guardian-backups"
+    region: "us-west-2"
+
+# Development Settings
+development:
+  mock_data: false
+  debug_mode: false
+  test_database: "biopulse_guardian_test"
+  profiling: false
